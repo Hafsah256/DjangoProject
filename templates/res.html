@@ -1,0 +1,133 @@
+{%load static%}
+<html lang="en">
+<head>
+  <style>
+    * {
+  box-sizing: border-box;
+}
+
+    .overlay button:hover {
+  background: #bbb;
+}
+    .overlay input[type=text] {
+  padding: 15px;
+  font-size: 17px;
+  border: none;
+  float: left;
+  width: 80%;
+  background: white;
+}
+.overlay input[type=text]:hover {
+  background: #f1f1f1;
+}
+
+.overlay button {
+  float: left;
+  width: 20%;
+  padding: 15px;
+  background: #ddd;
+  font-size: 17px;
+  border: none;
+  cursor: pointer;
+}
+a{
+	color: #000000;
+}
+    /* Style the search field */
+body {
+  font-family: Arial;
+  background: #d5f4e6;
+}
+table {
+  border-collapse: collapse;
+}
+tr:hover {background-color: #f5f5f5;}
+table, td, th {
+  border: 1px solid black;
+  padding: 15px;
+  text-align: left;
+}
+header{
+	background: #3875d7;
+	height :40px;
+}
+right-nav{
+	float: right;
+}
+right-nav li{
+	display: inline-block;
+}
+
+ul li {
+	list-style-type : none;
+    display: inline-block;
+}
+footer{
+   background:  #3875d7;
+   color: #ffffff;
+   position:relative;
+   bottom:0;
+   width:100%;
+   height:50px;
+  text-align: center
+  /* Height of the footer */
+}
+
+  </style>
+
+    <meta charset="UTF-8">
+    <title>reuslt page</title>
+
+</head>
+<body>
+<header>
+			<ul id="right-nav">
+              <li><form method="post" action="back">{%csrf_token%}
+    <button type="submit" value = "click" name=homepage>Home Page</button>
+</form></li>
+			</ul>
+</header>
+
+<section>
+
+  <p><h3>Here if the tweet is credible the prediction label will be showing 1 and if this isn't then it shows 0 instead</h3></p>
+<table style="width:100%">
+  <tr>
+    <th>Profile Picture</th>
+    <th>UserName</th>
+    <th>Text</th>
+    <th>verified</th>
+    <th>Predicted Label</th>
+    <th>Agree</th>
+  </tr>
+  <form action="radiobtn" method="post">{% csrf_token %}
+  {% for d in que %}
+  <tr>
+    <td><img src={{d.user_profileImg}}></td>
+    <td><a href={{d.userHomelink}}>{{d.userName}}</a></td>
+    <td><a href={{d.URL}}>{{d.text}}</a></td>
+    <td>{{d.userVerified}}</td>
+    <td>{{d.predictedlabel}}</td>
+
+    <td>
+      <input type="radio" name="{{d.userID}}" value="1" >Yes
+     <input type="radio" name="{{d.userID}}" value="0">No
+
+
+   <!--      <input type="radio" name="id" id="id" value="{{d.userID}}" >
+      <input type="radio" name="id" id="id1" value="{{d.userID}}">-->
+    </td>
+  </tr>
+  {% endfor %}
+ <button type="submit" value = "click" name=feed><i class="fa fa-search">submit</i></button>
+
+  </form>
+
+</table>
+</section>
+<footer>
+  2020 by 2418105h
+</footer>
+</body>
+</html>
+

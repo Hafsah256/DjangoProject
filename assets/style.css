@@ -1,0 +1,29 @@
+body{
+	background: #d5f4e6;
+}
+a{
+	color: #fff;
+}
+header{
+	background: #322a2a;
+	height :70px; 
+}
+#left-nav{
+	float: left;
+}
+#right-nav{
+	float: right;
+}
+#right-nav li{
+	display: inline;
+}
+ul li {
+	list-style-type : none;
+}
+footer{
+	clear: both;
+	background:#322a2a;
+	margin-top: 50px;
+	text-align: center;
+	color: #fff;
+}

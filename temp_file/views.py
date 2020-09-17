@@ -292,97 +292,86 @@ X_train22, X_val22, y_train22, y_val22 = train_test_split(
     X_train22, y_train22, test_size=0.25, random_state=0)
 
 
-pipeline_feature_74 = Pipeline([
-    ('union', FeatureUnion(
-        [
+pipeline_feature =  Pipeline([
+        ('union', FeatureUnion([
             ('text', Pipeline([
-                ('selector', ItemSelector(key='text')),
-                ('one-hot',
-                 CountVectorizer(tokenizer=tokenize_normalize, binary=True, lowercase=False, max_features=20000)),
-            ])),
-
-            ('entities', Pipeline([
-                ('selector', ItemSelector(key='entities')),
-                ('one-hot',
-                 CountVectorizer(tokenizer=tokenize_normalize, binary=True, lowercase=False, max_features=20000)),
-            ])),
-
-            ('URL', Pipeline([
-                ('selector', ItemSelector(key='URL')),
-                ('one-hot',
-                 CountVectorizer(tokenizer=tokenize_normalize, binary=True, lowercase=False, max_features=20000)),
-            ])),
-            ('userfollowers_count', Pipeline([
-                ('selector', ItemSelector(key='userfollowers_count')),
-                ('array', DataFrameToArrayTransformer()),
-                # CountVectorizer(tokenizer=tokenize_normalize,binary=True,lowercase=False, max_features=20000)),
-            ])),
-            ('favoriteCount', Pipeline([
-                ('selector', ItemSelector(key='favoriteCount')),
-                ('array', DataFrameToArrayTransformer()),
-            ])),
-            ('sentiment', Pipeline([
-                ('selector', ItemSelector(key='sentiment')),
-                ('array', DataFrameToArrayTransformer()),
-            ])),
-            ('source', Pipeline([
-                ('selector', ItemSelector(key='source')),
-                ('one-hot',
-                 CountVectorizer(tokenizer=tokenize_normalize, binary=True, lowercase=False, max_features=20000)),
-            ])),
-            ('neg', Pipeline([
-                ('selector', ItemSelector(key='negative')),
-                ('array', DataFrameToArrayTransformer()),
-                # CountVectorizer(tokenizer=tokenize_normalize,binary=True,lowercase=False, max_features=20000)),
-            ])),
-            ('pos', Pipeline([
-                ('selector', ItemSelector(key='positive')),
-                ('array', DataFrameToArrayTransformer()),
-                # CountVectorizer(tokenizer=tokenize_normalize,binary=True,lowercase=False, max_features=20000)),
-            ])),
-
-            ('textlen', Pipeline([
-                ('selector', ItemSelector(key='textLen')),
-                ('array', DataFrameToArrayTransformer()),
-                # CountVectorizer(tokenizer=tokenize_normalize,binary=True,lowercase=False, max_features=20000)),
-            ])),
-            ('processedtext', Pipeline([
-                ('selector', ItemSelector(key='processedtext')),
-                ('one-hot',
-                 CountVectorizer(tokenizer=tokenize_normalize, binary=True, lowercase=False, max_features=20000)),
-            ])),
-
-            ('spl', Pipeline([
-                ('selector', ItemSelector(key='spl')),
-                ('array', DataFrameToArrayTransformer()),
-            ])),
+              ('selector', ItemSelector(key='text')),
+              ('one-hot', CountVectorizer(tokenizer=tokenize_normalize,binary=True,lowercase=False, max_features=20000)),
+              ])),
+           ('textlen', Pipeline([
+              ('selector', ItemSelector(key='textLen')),
+              ('array', DataFrameToArrayTransformer()),#CountVectorizer(tokenizer=tokenize_normalize,binary=True,lowercase=False, max_features=20000)),
+              ])),
 
             ('userLocation', Pipeline([
-                ('selector', ItemSelector(key='userLocation')),
-                ('one-hot',
-                 CountVectorizer(tokenizer=tokenize_normalize, binary=True, lowercase=False, max_features=20000)),
-            ]))
-        ])
+              ('selector', ItemSelector(key='userLocation')),
+              ('one-hot', CountVectorizer(tokenizer=tokenize_normalize,binary=True,lowercase=False, max_features=20000)),
+              ])),
 
-     ),
-    ('rTree', RandomForestClassifier(random_state=10))
-])
+            ('userVerified', Pipeline([
+              ('selector', ItemSelector(key='userVerified')),
+              ('array', DataFrameToArrayTransformer()),
+              ])),
+
+            ('userProtected', Pipeline([
+              ('selector', ItemSelector(key='userProtected')),
+              ('array', DataFrameToArrayTransformer()),
+              ])),
+            ('sentiment', Pipeline([
+              ('selector', ItemSelector(key='sentiment')),
+              ('array', DataFrameToArrayTransformer()),
+              ])),
+
+            ('URL', Pipeline([
+              ('selector', ItemSelector(key='URL')),
+              ('one-hot',CountVectorizer(tokenizer=tokenize_normalize,binary=True,lowercase=False, max_features=20000)),
+             ])),
+            ('userfollowers_count', Pipeline([
+              ('selector', ItemSelector(key='userfollowers_count')),
+              ('array', DataFrameToArrayTransformer()),#CountVectorizer(tokenizer=tokenize_normalize,binary=True,lowercase=False, max_features=20000)),
+              ])),
+            ('favoriteCount', Pipeline([
+              ('selector', ItemSelector(key='favoriteCount')),
+              ('array', DataFrameToArrayTransformer()),
+              ])),
+            ('favourited', Pipeline([
+              ('selector', ItemSelector(key='favourited')),
+              ('array', DataFrameToArrayTransformer()),
+              ])),
+            ('retweeted', Pipeline([
+              ('selector', ItemSelector(key='retweeted')),
+              ('array', DataFrameToArrayTransformer()),
+              ])),
+            ('source', Pipeline([
+              ('selector', ItemSelector(key='source')),
+              ('one-hot', CountVectorizer(tokenizer=tokenize_normalize,binary=True,lowercase=False, max_features=20000)),
+              ])),
+            ('neg', Pipeline([
+              ('selector', ItemSelector(key='negative')),
+              ('array', DataFrameToArrayTransformer()),#CountVectorizer(tokenizer=tokenize_normalize,binary=True,lowercase=False, max_features=20000)),
+              ])),
+            ('pos', Pipeline([
+              ('selector', ItemSelector(key='positive')),
+              ('array', DataFrameToArrayTransformer()),#CountVectorizer(tokenizer=tokenize_normalize,binary=True,lowercase=False, max_features=20000)),
+              ])),
+           ('entities', Pipeline([
+              ('selector', ItemSelector(key='entities')),
+              ('one-hot', CountVectorizer(tokenizer=tokenize_normalize,binary=True,lowercase=False, max_features=20000)),
+              ])),
+                   ])
+        ),
+       ('rTree',RandomForestClassifier(random_state=10))
+    ])
 print("\n RandomForest classifier Before feature added \n")
-pipeline_feature_74.fit(X_train22,y_train22)
+pipeline_feature.fit(X_train22,y_train22)
 #result074 = pipeline_feature_74.predict(X_val22)
 def predictions(df):
     model_=joblib.load("randomforest.joblib")
     return model_.predict(df)
 
-
-
-joblib.dump(pipeline_feature_74, "./randomforest.joblib", compress=True)
+joblib.dump(pipeline_feature, "./randomforest.joblib", compress=True)
 #joblib.dump(one_hot_vectorizer,"./vectorizer.joblib", compress=True)
 
-x = data_frame.head(3)
-result= predictions(x)
-print('result is === ',result)
-#joblib.dump(result,"./resutl.joblib", compress=True)
 def home(request):
     obj = DB_model.objects.all()
     print("iterating over obj")
@@ -610,8 +599,6 @@ def fetching(search_words, numberofitem=10):
     df['screenName'] = pd.DataFrame(screenName, columns=['screenName'])
     df['imgUrl'] = pd.DataFrame(imgurl, columns=['imgUrl'])
     return df
-
-
 def retraining_model(length_of_data):
     print(data_frame.head(3))
     db_obj = DB_model.objects.all()
@@ -658,7 +645,6 @@ def retraining_model(length_of_data):
             favourited1.append(0)
         else:
             favourited1.append(1)
-        #favourited.append(int(i.favourited))
         print('favourited value ',i.favourited,'favourited type', type(favourited1))
         source1.append(i.source)
         language1.append(i.language)
@@ -752,88 +738,90 @@ def retraining_model(length_of_data):
         new_data_frame, labels, test_size=0.3, random_state=0)
     print("printing x_train",X_train)
 
-    pipeline_feature_74 = Pipeline([
-        ('union', FeatureUnion(
-            [
-                ('text', Pipeline([
-                    ('selector', ItemSelector(key='text')),
-                    ('one-hot',
-                     CountVectorizer(tokenizer=tokenize_normalize, binary=True, lowercase=False, max_features=20000)),
-                ])),
+    pipeline_feature_ = Pipeline([
+        ('union', FeatureUnion([
+            ('text', Pipeline([
+                ('selector', ItemSelector(key='text')),
+                ('one-hot',
+                 CountVectorizer(tokenizer=tokenize_normalize, binary=True, lowercase=False, max_features=20000)),
+            ])),
+            ('textlen', Pipeline([
+                ('selector', ItemSelector(key='textLen')),
+                ('array', DataFrameToArrayTransformer()),
+                # CountVectorizer(tokenizer=tokenize_normalize,binary=True,lowercase=False, max_features=20000)),
+            ])),
 
-                ('entities', Pipeline([
-                    ('selector', ItemSelector(key='entities')),
-                    ('one-hot',
-                     CountVectorizer(tokenizer=tokenize_normalize, binary=True, lowercase=False, max_features=20000)),
-                ])),
+            ('userLocation', Pipeline([
+                ('selector', ItemSelector(key='userLocation')),
+                ('one-hot',
+                 CountVectorizer(tokenizer=tokenize_normalize, binary=True, lowercase=False, max_features=20000)),
+            ])),
 
-                ('URL', Pipeline([
-                    ('selector', ItemSelector(key='URL')),
-                    ('one-hot',
-                     CountVectorizer(tokenizer=tokenize_normalize, binary=True, lowercase=False, max_features=20000)),
-                ])),
-                ('userfollowers_count', Pipeline([
-                    ('selector', ItemSelector(key='userfollowers_count')),
-                    ('array', DataFrameToArrayTransformer()),
-                    # CountVectorizer(tokenizer=tokenize_normalize,binary=True,lowercase=False, max_features=20000)),
-                ])),
-                ('favoriteCount', Pipeline([
-                    ('selector', ItemSelector(key='favoriteCount')),
-                    ('array', DataFrameToArrayTransformer()),
-                ])),
-                ('sentiment', Pipeline([
-                    ('selector', ItemSelector(key='sentiment')),
-                    ('array', DataFrameToArrayTransformer()),
-                ])),
-                ('source', Pipeline([
-                    ('selector', ItemSelector(key='source')),
-                    ('one-hot',
-                     CountVectorizer(tokenizer=tokenize_normalize, binary=True, lowercase=False, max_features=20000)),
-                ])),
-                ('neg', Pipeline([
-                    ('selector', ItemSelector(key='negative')),
-                    ('array', DataFrameToArrayTransformer()),
-                    # CountVectorizer(tokenizer=tokenize_normalize,binary=True,lowercase=False, max_features=20000)),
-                ])),
-                ('pos', Pipeline([
-                    ('selector', ItemSelector(key='positive')),
-                    ('array', DataFrameToArrayTransformer()),
-                    # CountVectorizer(tokenizer=tokenize_normalize,binary=True,lowercase=False, max_features=20000)),
-                ])),
+            ('userVerified', Pipeline([
+                ('selector', ItemSelector(key='userVerified')),
+                ('array', DataFrameToArrayTransformer()),
+            ])),
 
-                ('textlen', Pipeline([
-                    ('selector', ItemSelector(key='textLen')),
-                    ('array', DataFrameToArrayTransformer()),
-                    # CountVectorizer(tokenizer=tokenize_normalize,binary=True,lowercase=False, max_features=20000)),
-                ])),
-                ('processedtext', Pipeline([
-                    ('selector', ItemSelector(key='processedtext')),
-                    ('one-hot',
-                     CountVectorizer(tokenizer=tokenize_normalize, binary=True, lowercase=False, max_features=20000)),
-                ])),
+            ('userProtected', Pipeline([
+                ('selector', ItemSelector(key='userProtected')),
+                ('array', DataFrameToArrayTransformer()),
+            ])),
+            ('sentiment', Pipeline([
+                ('selector', ItemSelector(key='sentiment')),
+                ('array', DataFrameToArrayTransformer()),
+            ])),
 
-                ('spl', Pipeline([
-                    ('selector', ItemSelector(key='spl')),
-                    ('array', DataFrameToArrayTransformer()),
-                ])),
-
-                ('userLocation', Pipeline([
-                    ('selector', ItemSelector(key='userLocation')),
-                    ('one-hot',
-                     CountVectorizer(tokenizer=tokenize_normalize, binary=True, lowercase=False, max_features=20000)),
-                ]))
-            ])
-
+            ('URL', Pipeline([
+                ('selector', ItemSelector(key='URL')),
+                ('one-hot',
+                 CountVectorizer(tokenizer=tokenize_normalize, binary=True, lowercase=False, max_features=20000)),
+            ])),
+            ('userfollowers_count', Pipeline([
+                ('selector', ItemSelector(key='userfollowers_count')),
+                ('array', DataFrameToArrayTransformer()),
+                # CountVectorizer(tokenizer=tokenize_normalize,binary=True,lowercase=False, max_features=20000)),
+            ])),
+            ('favoriteCount', Pipeline([
+                ('selector', ItemSelector(key='favoriteCount')),
+                ('array', DataFrameToArrayTransformer()),
+            ])),
+            ('favourited', Pipeline([
+                ('selector', ItemSelector(key='favourited')),
+                ('array', DataFrameToArrayTransformer()),
+            ])),
+            ('retweeted', Pipeline([
+                ('selector', ItemSelector(key='retweeted')),
+                ('array', DataFrameToArrayTransformer()),
+            ])),
+            ('source', Pipeline([
+                ('selector', ItemSelector(key='source')),
+                ('one-hot',
+                 CountVectorizer(tokenizer=tokenize_normalize, binary=True, lowercase=False, max_features=20000)),
+            ])),
+            ('neg', Pipeline([
+                ('selector', ItemSelector(key='negative')),
+                ('array', DataFrameToArrayTransformer()),
+                # CountVectorizer(tokenizer=tokenize_normalize,binary=True,lowercase=False, max_features=20000)),
+            ])),
+            ('pos', Pipeline([
+                ('selector', ItemSelector(key='positive')),
+                ('array', DataFrameToArrayTransformer()),
+                # CountVectorizer(tokenizer=tokenize_normalize,binary=True,lowercase=False, max_features=20000)),
+            ])),
+            ('entities', Pipeline([
+                ('selector', ItemSelector(key='entities')),
+                ('one-hot',
+                 CountVectorizer(tokenizer=tokenize_normalize, binary=True, lowercase=False, max_features=20000)),
+            ])),
+        ])
          ),
         ('rTree', RandomForestClassifier(random_state=10))
     ])
-    pipeline_feature_74.fit(X_train, y_train)
-    result074 = pipeline_feature_74.predict(X_test)
+    pipeline_feature_.fit(X_train, y_train)
+    result074 = pipeline_feature_.predict(X_test)
     print(evaluation_summary("Results with new dataset are ",result074,y_test))
-    #df.to_csv('data.csv')
-    #print('after to_csv')
-    #print(df)
 
-    joblib.dump(pipeline_feature_74, "./randomforest.joblib", compress=True)
+
+    joblib.dump(pipeline_feature_, "./randomforest.joblib", compress=True)
 
     return True

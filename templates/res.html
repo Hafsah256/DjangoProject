@@ -87,10 +87,10 @@ footer{
 </form></li>
 			</ul>
 </header>
+  <p><h3>Here if the tweet is credible the prediction label will be showing 1 and if this isn't then it shows 0 instead</h3></p>
 
 <section>
 
-  <p><h3>Here if the tweet is credible the prediction label will be showing 1 and if this isn't then it shows 0 instead</h3></p>
 <table style="width:100%">
   <tr>
     <th>Profile Picture</th>
@@ -98,7 +98,7 @@ footer{
     <th>Text</th>
     <th>verified</th>
     <th>Predicted Label</th>
-    <th>Agree</th>
+    <th>Feeedback</th>
   </tr>
   <form action="radiobtn" method="post">{% csrf_token %}
   {% for d in que %}
@@ -110,12 +110,8 @@ footer{
     <td>{{d.predictedlabel}}</td>
 
     <td>
-      <input type="radio" name="{{d.userID}}" value="1" >Yes
-     <input type="radio" name="{{d.userID}}" value="0">No
-
-
-   <!--      <input type="radio" name="id" id="id" value="{{d.userID}}" >
-      <input type="radio" name="id" id="id1" value="{{d.userID}}">-->
+      <input type="radio" name="{{d.userID}}" value={{d.predictedlabel}} >Agree
+      <input type="radio" name="{{d.userID}}" value=-1>Disagree
     </td>
   </tr>
   {% endfor %}
@@ -130,4 +126,3 @@ footer{
 </footer>
 </body>
 </html>
-

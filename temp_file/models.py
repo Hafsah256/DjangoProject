@@ -1,8 +1,5 @@
 from django.db import models
 import uuid
-
-
-
 from sklearn.naive_bayes import GaussianNB
 from sklearn.naive_bayes import BernoulliNB
 from sklearn.ensemble import RandomForestClassifier
@@ -45,7 +42,6 @@ class ItemSelector(BaseEstimator, TransformerMixin):
 
     def transform(self, data_dict):
         return data_dict[self.key]
-
 class DB_model(models.Model):
     userName = models.CharField(max_length=100,null=True)
     userID  = models.UUIDField(primary_key = True,
@@ -76,8 +72,3 @@ class DB_model(models.Model):
     user_profileImg = models.URLField(max_length=200, default='https://twitter.com/')
     topics=models.CharField(max_length=100, null=True,default="covid")
     twitterID = models.TextField()
-
-
-
-
-

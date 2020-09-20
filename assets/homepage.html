@@ -2,7 +2,7 @@
 
 <html lang="en">
 <head>
-    <style>
+  <style>
     * {
   box-sizing: border-box;
 }
@@ -31,10 +31,13 @@
   border: none;
   cursor: pointer;
 }
-
+a{
+	color: #000000;
+}
     /* Style the search field */
 body {
   font-family: Arial;
+  background: #d5f4e6;
 }
 table {
   border-collapse: collapse;
@@ -45,14 +48,53 @@ table, td, th {
   padding: 15px;
   text-align: left;
 }
+header{
+	background: #3875d7;
+	height :40px;
+}
+right-nav{
+	float: right;
+}
+right-nav li{
+	display: inline-block;
+}
 
+ul li {
+	list-style-type : none;
+    display: inline-block;
+}
+footer{
+   background:  #3875d7;
+   color: #ffffff;
+   position:relative;
+   bottom:0;
+   width:100%;
+   height:50px;
+  text-align: center
+  /* Height of the footer */
+}
+homebtn button{
+  background: #3875d7;
+  margin:0;
+  top: 50px;
+
+
+}
   </style>
-
-    <meta charset="UTF-8">
-    <title>Home page</title>
+  <meta charset="UTF-8">
+  <title>Home page</title>
 </head>
 <body>
-<h1>Home page!!!!</h1>
+<section>
+
+<header>
+			<ul id="right-nav" >
+              <li ><form method="post" action="back">{%csrf_token%}
+    <button id="homebtn" type="submit" value = "click" name=homepage >Home Page</button>
+</form></li>
+
+			</ul>
+</header>
 <br><br>
 <div id="myOverlay" class="overlay">
   <div class="overlay-content">
@@ -65,9 +107,13 @@ table, td, th {
 <fieldset>
   <legend>Recently Searched Topics:</legend>
   {% for i in list_%}
-  <label>i</label><br><br>
-  {%end for%}
+  <label>{{i}}</label><br><br>
+  {%endfor%}
 </fieldset>
+</section>
+<footer>
+  2020 by 2418105h
+</footer>
 
 </body>
 </html>

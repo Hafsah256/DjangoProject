@@ -371,14 +371,12 @@ def predictions(df):
 
 joblib.dump(pipeline_feature, "./randomforest.joblib", compress=True)
 #joblib.dump(one_hot_vectorizer,"./vectorizer.joblib", compress=True)
-
 def home(request):
     obj = DB_model.objects.all()
     print("iterating over obj")
     for n in obj:
         if n.topics not in words:
             words.append(n.topics)
-
     print('words = ',words)
     #retraining_model(length_of_data)
     return render(request,"homepage.html",{'list_':words})#,{'list':list_thing})#, {{'data_list':list_thing}})#HttpResponse("Hell world!!!!!")
@@ -391,28 +389,49 @@ def back(request):
     queryrequest.clear()
     return render(request, "homepage.html", {'list_': words})
 def radiobtn(request):
+    tmp=0
     for i in list_of_objects:
+        tmp = 0
         if i.topics in queryrequest:
-            i.predictedlabel = request.POST.get(str(i.userID))
+            print('feedback list is ', request.POST.get(str(i.userID)))
+            fdback= request.POST.get(str(i.userID))
+            print('before change ',type(fdback),type(i.predictedlabel))
+            print('before change ', fdback, i.predictedlabel)
+            if fdback == None:
+                i.predictedlabel = i.predictedlabel
+
+            elif float(fdback) == i.predictedlabel:
+                i.predictedlabel = float(fdback)
+                print('in if ',i.predictedlabel)
+            else:
+                i.predictedlabel = 1 - i.predictedlabel
+                print(temp, 'in else', i.predictedlabel)
+
+            #print('after change',fdback, i.predictedlabel)
     queryrequest.clear()
-    for n in obj:
-        if n.topics not in words:
-            words.append(n.topics)
+    #obj = DB_model.objects.all()
+    #print("iterating over obj")
+    #for n in obj:
+     #   if n.topics not in words:
+      #      words.append(n.topics)
+    #print('words = ', words)
     return render(request,"temp.html",{'list_':list_of_objects})#, {'col':"jhsdjkhfakdfa;ofosdfa"})
 def search (request):
-    #print(model)
     query = request.POST['search']
     queryrequest.append(query)
     print('query req ',queryrequest)
     dataframe = fetching(query)
     dataframe=AddFeatures(dataframe)
     length1 = len(dataframe)
-    print(dataframe)
-
+    print(dataframe,'len of dta',length1)
+    labels_array =  predictions(dataframe)
     for index, row in dataframe.iterrows():
         obj_index = DB_model()
-        obj_index.userID =uuid.uuid4()
+        print('type of userid is', type(row['userID']))
+        obj_index.userID = uuid.uuid4()
+        obj_index.twitterID=   (row['userID'])#uuid.uuid4()
         obj_index.userName = (row['userName'])
+        obj_index.date = (row['date'])
         obj_index.text=(row['text'])
         obj_index.textLen=(row['textLen'])
         obj_index.retweetsCount=(row['retweetsCount'])
@@ -435,7 +454,7 @@ def search (request):
         obj_index.userVerified=(row['userVerified'])
         obj_index.userProtected=(row['userProtected'])#userProtected[i]
         obj_index.sentiment = (row['sentiment'])#sentiment[i]
-        obj_index.predictedlabel=-2
+        obj_index.predictedlabel=labels_array[index]
         obj_index.userHomelink = 'https://twitter.com/'+(row['screenName'])
         obj_index.user_profileImg = (row['imgUrl'])
         obj_index.topics= query
@@ -635,53 +654,37 @@ def retraining_model(length_of_data):
         name1.append(i.userName)
         text1.append(i.text)
         textLen1.append(int(i.textLen))
-        print('textlen type',type(textLen1))
         if i.retweeted == 'False':
             retweeted1.append(0)
         else:
             retweeted1.append(1)
-        print('retweeted value ',i.retweeted,'retweeted type', type(retweeted1))
         if i.favourited == 'False':
             favourited1.append(0)
         else:
             favourited1.append(1)
-        print('favourited value ',i.favourited,'favourited type', type(favourited1))
         source1.append(i.source)
         language1.append(i.language)
         date1.append(i.date)
         location1.append(i.userLocation)
         retweetsCount1.append(int(i.retweetsCount))
-        print('retweetsCount value ', i.retweetsCount, 'favourited type', type(retweetsCount1))
+        #print('retweetsCount value ', i.retweetsCount, 'favourited type', type(retweetsCount1))
         favoriteCount1.append(int(i.favoriteCount))
-        print('favoriteCount value ', i.favoriteCount, 'favourited type', type(favoriteCount1))
         url1.append(i.URL)
         followers_count1.append(int(i.userfollowers_count))
-        print('userfollowers_count value ', i.userfollowers_count, 'favourited type', type(followers_count1))
         friends_count1.append(int(i.userfriends_count))
-        print('userfriends_count value ', i.userfriends_count, 'favourited type', type(friends_count1))
         listed_count1.append(int(i.userListed_count))
-        print('userListed_count value ', i.userListed_count, 'favourited type', type(listed_count1))
         favorite_count1.append(int(i.userFavorites_count))
-        print('userFavorites_count value ', i.userFavorites_count, 'favourited type', type(favorite_count1))
         statuses_count1.append(int(i.userStatuses_count))
-        print('statuses_count1 value ', i.userStatuses_count, 'favourited type', type(statuses_count1))
         if i.userVerified == 'False':
             verified1.append(0)
         else:
             verified1.append(1)
-        print('userVerified value ', i.userVerified, 'favourited type', type(verified1))
         if i.userProtected == 'False':
             prot1.append(0)
         else:
             prot1.append(1)
-        print('userProtected value ', i.userProtected, 'favourited type', type(prot1))
-
-        #verified.append(int(i.userVerified))
-        #prot.append((i.userProtected))
         senti1.append(int(i.sentiment))
         label1.append(int(i.predictedlabel))
-        print('senti1 value ', i.sentiment, 'favourited type', type(senti1))
-        print('label1 value ', i.predictedlabel, 'favourited type', type(label1))
 
     df = pd.DataFrame(name1, columns=['userName'])
     #df['userName'] = pd.DataFrame(name, columns=['userName'])
@@ -708,16 +711,10 @@ def retraining_model(length_of_data):
     df['label'] = pd.DataFrame(label1, columns=['label'])
 
     existing_data_frame = pd.read_csv('data.csv')
-    print('existing dataframe datatypes', existing_data_frame.dtypes)
-    #frames =[existing_data_frame,df]
-    #new_data_frame = pd.concat(frames)
+    #print('existing dataframe datatypes', existing_data_frame.dtypes)
     new_data_frame = existing_data_frame.append(df)
-
-
-    print('----------------------------------\n')
-    #print(new_data_frame)
-    #print(len(new_data_frame))
-    print('new dataframe datatypes', new_data_frame.dtypes)
+    #print('----------------------------------\n')
+    #print('new dataframe datatypes', new_data_frame.dtypes)
     labels = (new_data_frame['label'])
     # nan values are replaced by this
     new_data_frame["source"].fillna("Twitter Web App", inplace=True)
@@ -728,12 +725,9 @@ def retraining_model(length_of_data):
     new_data_frame.drop(columns='Unnamed: 0', inplace=True)
     new_data_frame.drop(columns='label', inplace=True)
     print('--------------after dropping columns--------------------\n')
-    print(new_data_frame)
-    print(labels)
     print(len(new_data_frame))
     new_data_frame = AddFeatures(new_data_frame)
-    print("new features added")
-
+    #print("new features added")
     X_train, X_test, y_train, y_test = train_test_split(
         new_data_frame, labels, test_size=0.3, random_state=0)
     print("printing x_train",X_train)

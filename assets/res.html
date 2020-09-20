@@ -30,10 +30,13 @@
   border: none;
   cursor: pointer;
 }
-
+a{
+	color: #000000;
+}
     /* Style the search field */
 body {
   font-family: Arial;
+  background: #d5f4e6;
 }
 table {
   border-collapse: collapse;
@@ -44,13 +47,49 @@ table, td, th {
   padding: 15px;
   text-align: left;
 }
+header{
+	background: #3875d7;
+	height :40px;
+}
+right-nav{
+	float: right;
+}
+right-nav li{
+	display: inline-block;
+}
+
+ul li {
+	list-style-type : none;
+    display: inline-block;
+}
+footer{
+   background:  #3875d7;
+   color: #ffffff;
+   position:relative;
+   bottom:0;
+   width:100%;
+   height:50px;
+  text-align: center
+  /* Height of the footer */
+}
 
   </style>
 
     <meta charset="UTF-8">
     <title>reuslt page</title>
+
 </head>
 <body>
+<header>
+			<ul id="right-nav">
+              <li><form method="post" action="back">{%csrf_token%}
+    <button type="submit" value = "click" name=homepage>Home Page</button>
+</form></li>
+			</ul>
+</header>
+  <p><h3>Here if the tweet is credible the prediction label will be showing 1 and if this isn't then it shows 0 instead</h3></p>
+
+<section>
 
 <table style="width:100%">
   <tr>
@@ -59,7 +98,7 @@ table, td, th {
     <th>Text</th>
     <th>verified</th>
     <th>Predicted Label</th>
-    <th>FeedBack</th>
+    <th>Feeedback</th>
   </tr>
   <form action="radiobtn" method="post">{% csrf_token %}
   {% for d in que %}
@@ -69,21 +108,21 @@ table, td, th {
     <td><a href={{d.URL}}>{{d.text}}</a></td>
     <td>{{d.userVerified}}</td>
     <td>{{d.predictedlabel}}</td>
+
     <td>
-        <input type="radio"  name={{d.userName}} value=1>
-        <label>Agree</label><br>
-        <input type="radio" name={{d.userName}} value=0>
-        <label >Disagree</label><br>
+      <input type="radio" name="{{d.userID}}" value={{d.predictedlabel}} >Agree
+      <input type="radio" name="{{d.userID}}" value=-1>Disagree
     </td>
   </tr>
   {% endfor %}
-
-    <button type="submit" value = "click" name=feed><i class="fa fa-search">submit</i></button>
+ <button type="submit" value = "click" name=feed><i class="fa fa-search">submit</i></button>
 
   </form>
 
 </table>
-
+</section>
+<footer>
+  2020 by 2418105h
+</footer>
 </body>
 </html>
-

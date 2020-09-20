@@ -9,5 +9,4 @@ urlpatterns = [
     path('radiobtn',views.radiobtn,name="temp.html"),
     path('back', views.back, name="homepage.html"),
    # path('retrain',views.retrain, name='retraining'),
-
 ]
